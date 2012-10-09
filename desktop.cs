@@ -24,7 +24,7 @@ function BLG_Desktop::guiToggle(%this, %tog) {
 	BLG_Desktop_Swatch.setVisible(%tog);
 	BLG_Desktop_Menu.setVisible(%tog);
 
-	if(%tog) {
+	if(%tog && $BLGD::Sound) {
 		alxPlay(BLG_Sound_Click);
 	}
 }
@@ -692,7 +692,7 @@ function BLG_DT::getTime(%this) {
 	if(%this.timeMode == 1) {
 		//24-hour-mode
 		%explode = strReplace(getWord(getDateTime(), 1), ":", "\t");
-		return getField(%explode, 0) @ ":" @ getField(%explode, 1);
+		return getField(%explode, 0) @ ":" @ getField(%explode, 1) @ ":" @ getField(%explode, 2);
 	} else if(%this.timeMode == 2) {
 		//12-hour-mode
 		%explode = strReplace(getWord(getDateTime(), 1), ":", "\t");
@@ -956,7 +956,9 @@ package BLG_DT_Package {
 			if(isObject(%obj)) {
 	            if(%obj.gui.position $= %obj.originalPos) {
 	                eval(%obj.command);
-	                alxPlay(BLG_Sound_Click);
+	                if($BLGD::Sound) {
+	                	alxPlay(BLG_Sound_Click);
+	            	}
 	            } else {
 	                %x = getWord(%pos, 0);
 	                %y = getWord(%pos, 1);
@@ -1047,6 +1049,7 @@ package BLG_DT_Package {
 
 	function onExit() {
 		BLG_DT.saveAppData();
+		BLG_DT.updatePrefs();
 		export("$BLGD::*", "config/Blocktop/prefs.cs");
 		parent::onExit();
 	}
@@ -1061,11 +1064,28 @@ function BLG_DT::onAdd(%this)
 	%this.loadAppData();
 	%this.registerImageIcon("Start Game", "MainMenuGui.clickStart(MainMenuGui);", "Add-Ons/System_Blocktop/image/desktop/icons/games alt.png");
 	%this.registerImageIcon("Join Game", "Canvas.pushDialog(JoinServerGui);", "Add-Ons/System_Blocktop/image/desktop/icons/globe.png");
-	%this.registerImageIcon("Remote Control", "echo(\"Insert the Remote Control GUI\");", "Add-Ons/System_Blocktop/image/desktop/icons/windows easy transfer.png");
+	//%this.registerImageIcon("Remote Control", "echo(\"Insert the Remote Control GUI\");", "Add-Ons/System_Blocktop/image/desktop/icons/windows easy transfer.png");
 	//%this.registerImageIcon("Apps", "echo(\"Insert Apps GUI\");", "Add-Ons/System_BlocklandGlass/image/desktop/icons/my apps.png");
 	%this.registerImageIcon("Quit", "quit();", "Add-Ons/System_Blocktop/image/desktop/icons/power - shut down.png");
 
 	%this.refresh();
+}
+
+function BLG_DT::updatePrefs(%this) {
+	if(!$BLG::DT::loadedPrefs) {
+		BLG_Desktop_Options_Clock.setValue($BLGD::Clock);
+		BLG_Desktop_Options_Sound.setValue($BLGD::Sound);
+		$BLG::DT::loadedPrefs = true;
+	}
+
+	$BLGD::Sound = BLG_Desktop_Options_Sound.getValue();
+
+	%c = $BLGD::Clock = BLG_Desktop_Options_Clock.getValue();
+	if(%c) {
+		BLG_DT.timemode = 1;
+	} else {
+		BLG_DT.timemode = 3;
+	}
 }
 
 if(!isObject(BLG_DT)) {
@@ -1081,4 +1101,5 @@ if(!isObject(BLG_DT)) {
 
 		loadAppMode = 4;
 	};
+	BLG_DT.updatePrefs();
 }

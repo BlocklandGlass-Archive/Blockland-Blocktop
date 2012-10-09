@@ -44,7 +44,7 @@ if(!isObject(BLG_ScrollProfile)) new GuiControlProfile(BLG_ScrollProfile)
    fontColors[3] = "70 70 255"; //B
 
    hasBitmapArray = true;
-   bitmap = "Add-Ons/System_BlocklandGlass/image/scroll.png";
+   bitmap = "Add-Ons/System_Blocktop/image/scroll.png";
 };
 
 if(!isObject(BLG_TextEditProfile)) new GuiControlProfile(BLG_TextEditProfile : GuiTextEditProfile)
@@ -92,7 +92,7 @@ if(!isObject(BLG_VersionTextProfile)) new GuiControlProfile(BLG_VersionTextProfi
 
 if(!isObject(BLG_DesktopWindowProfile)) new GuiControlProfile(BLG_DesktopWindowProfile : GuiWindowProfile) {
    fillColor = "255 255 255 255";
-   bitmap = "Add-Ons/System_BlocklandGlass/image/desktop/window";
+   bitmap = "Add-Ons/System_Blocktop/image/desktop/window";
    fontColor = "0 0 0 255";
    fontType = "Arial";
 };
